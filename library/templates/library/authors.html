@@ -1,0 +1,6 @@
+{% extends 'library/base.html' %}
+{% block title %}Авторы — АИС Библиотека{% endblock %}
+{% block content %}
+<div class="heading-row"><div><h1>Авторы</h1><p class="muted">Авторы, представленные в библиотечном каталоге.</p></div></div>
+<div class="card table-wrap"><table><thead><tr><th>ID</th><th>Автор</th><th>Книг в каталоге</th></tr></thead><tbody>{% for author in authors %}<tr><td>{{ author.id }}</td><td>{{ author.name }}</td><td>{{ author.books.count }}</td></tr>{% empty %}<tr><td colspan="3" class="empty">Авторы отсутствуют.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

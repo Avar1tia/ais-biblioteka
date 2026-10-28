@@ -1,0 +1,44 @@
+{% load static %}<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}АИС Библиотека{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'library/style.css' %}">
+</head>
+<body>
+<header class="topbar">
+  <div class="container nav">
+    <a class="brand" href="{% url 'library:catalog' %}" aria-label="АИС Библиотека">
+      <svg class="brand-icon" viewBox="0 0 32 26" aria-hidden="true">
+        <path d="M3 4.5c4.8-.8 8.7.2 13 3.1v15.2c-4.3-2.9-8.2-3.9-13-3.1V4.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M29 4.5c-4.8-.8-8.7.2-13 3.1v15.2c4.3-2.9 8.2-3.9 13-3.1V4.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+      <span>АИС Библиотека</span>
+    </a>
+    <nav class="main-nav">
+      <a href="{% url 'library:catalog' %}" class="{% if request.resolver_match.url_name == 'catalog' %}active{% endif %}">Книги</a>
+      <a href="{% url 'library:authors' %}" class="{% if request.resolver_match.url_name == 'authors' %}active{% endif %}">Авторы</a>
+      <a href="{% url 'library:readers' %}" class="{% if request.resolver_match.url_name == 'readers' %}active{% endif %}">Читатели</a>
+      <a href="{% url 'library:loans' %}" class="{% if request.resolver_match.url_name == 'loans' %}active{% endif %}">Выдачи</a>
+    </nav>
+    <div class="auth">
+      {% if user.is_authenticated %}
+        {% if not user.is_staff %}<a href="{% url 'library:cabinet' %}">Личный кабинет</a>{% endif %}
+        {% if user.is_staff %}<a class="auth-secondary" href="{% url 'library:reservations' %}">Бронирования</a>{% endif %}
+        <span class="username">{{ user.username }}</span>
+        <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="link-btn">Выйти</button></form>
+      {% else %}
+        <a class="login-link" href="{% url 'login' %}">Войти</a>
+        <a class="btn signup-btn" href="{% url 'library:signup' %}">Зарегистрироваться</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+<main class="container page">
+  {% for message in messages %}<div class="alert {{ message.tags }}">{{ message }}</div>{% endfor %}
+  {% block content %}{% endblock %}
+</main>
+<footer class="container footer">Учебный прототип АИС «Библиотека» · Django</footer>
+</body>
+</html>
