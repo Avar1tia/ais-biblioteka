@@ -2,7 +2,6 @@
 -- PostgreSQL database dump
 --
 
-\restrict 6YjU2UaBvBlB7UAggLkNxXj3o1ibIE8LS0bdy0GRdTzaP7FokpiqXrw6xO3N0bS
 
 -- Dumped from database version 16.15
 -- Dumped by pg_dump version 16.15
@@ -324,6 +323,7 @@ CREATE TABLE public.library_book (
     genre_id bigint,
     publisher_id bigint,
     shelf_location character varying(32),
+    storage_zone character varying(24),
     CONSTRAINT library_book_year_check CHECK ((year >= 0))
 );
 
@@ -1200,5 +1200,3 @@ ALTER TABLE ONLY public.library_reservation
 --
 -- PostgreSQL database dump complete
 --
-
-\unrestrict 6YjU2UaBvBlB7UAggLkNxXj3o1ibIE8LS0bdy0GRdTzaP7FokpiqXrw6xO3N0bS
