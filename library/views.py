@@ -29,7 +29,7 @@ def catalog(request):
     genre_id = request.GET.get("genre", "").strip()
     books = Book.objects.prefetch_related("authors", "copies").select_related("genre", "publisher")
     if q:
-        books = books.filter(Q(title__icontains=q) | Q(authors__name__icontains=q) | Q(isbn__icontains=q)).distinct()
+        books = books.filter(Q(title__icontains=q) | Q(authors__name__icontains=q)).distinct()
     if genre_id:
         books = books.filter(genre_id=genre_id)
     return render(request, "library/catalog.html", {"books": books, "genres": Genre.objects.all(), "q": q, "selected_genre": genre_id})
