@@ -40,6 +40,7 @@ class Book(models.Model):
     isbn = models.CharField("ISBN", max_length=32, blank=True, db_index=True)
     description = models.TextField("Описание", blank=True)
     shelf_location = models.CharField("Место хранения", max_length=32, null=True, blank=True)
+    storage_zone = models.CharField("Зона хранения", max_length=24, null=True, blank=True)
     class Meta:
         ordering = ["title"]
         verbose_name = "книга"
