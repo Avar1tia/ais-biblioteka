@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import F, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from .forms import LoanForm, ReaderForm, ReservationForm, SignUpForm
@@ -27,12 +27,25 @@ def log_event(request, action, obj=None, details=""):
 def catalog(request):
     q = request.GET.get("q", "").strip()
     genre_id = request.GET.get("genre", "").strip()
+    sort = request.GET.get("sort", "")
     books = Book.objects.prefetch_related("authors", "copies").select_related("genre", "publisher")
     if q:
         books = books.filter(Q(title__icontains=q) | Q(authors__name__icontains=q) | Q(isbn__icontains=q)).distinct()
     if genre_id:
         books = books.filter(genre_id=genre_id)
-    return render(request, "library/catalog.html", {"books": books, "genres": Genre.objects.all(), "q": q, "selected_genre": genre_id})
+    if sort == "year_asc":
+        books = books.order_by(F("year").asc(nulls_last=True), "title", "pk")
+    elif sort == "year_desc":
+        books = books.order_by(F("year").desc(nulls_last=True), "title", "pk")
+    else:
+        sort = ""
+    return render(request, "library/catalog.html", {
+        "books": books,
+        "genres": Genre.objects.all(),
+        "q": q,
+        "selected_genre": genre_id,
+        "selected_sort": sort,
+    })
 
 
 

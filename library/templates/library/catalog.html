@@ -11,6 +11,11 @@
       <option value="">Все жанры</option>
       {% for g in genres %}<option value="{{ g.id }}" {% if selected_genre == g.id|stringformat:'s' %}selected{% endif %}>{{ g.name }}</option>{% endfor %}
     </select>
+    <select class="form-select" name="sort" onchange="this.form.submit()" aria-label="Сортировка книг">
+      <option value="">По названию</option>
+      <option value="year_asc" {% if selected_sort == 'year_asc' %}selected{% endif %}>Сначала ранние издания</option>
+      <option value="year_desc" {% if selected_sort == 'year_desc' %}selected{% endif %}>Сначала поздние издания</option>
+    </select>
     {% if user.is_superuser %}
       <a class="btn green add-book" href="/admin/library/book/add/">+&nbsp; Добавить книгу</a>
     {% elif user.is_staff %}
