@@ -39,6 +39,7 @@ class Book(models.Model):
     year = models.PositiveIntegerField("Год издания", null=True, blank=True)
     isbn = models.CharField("ISBN", max_length=32, blank=True, db_index=True)
     description = models.TextField("Описание", blank=True)
+    shelf_location = models.CharField("Место хранения", max_length=32, null=True, blank=True)
     class Meta:
         ordering = ["title"]
         verbose_name = "книга"
