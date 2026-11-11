@@ -35,12 +35,15 @@ def schema(service):
         "pg_dump", "--no-password", "--schema-only", "--schema=public",
         "--no-owner", "--no-privileges", service=service, capture_output=True,
     )
-    lines = result.stdout.decode("utf-8").splitlines()
-    return [line for line in lines if not DUMP_METADATA.fullmatch(line)]
+    return schema_lines(result.stdout.decode("utf-8"))
 
 
-def compare(left, right):
-    diff = list(difflib.unified_diff(schema(left), schema(right), left, right, lineterm=""))
+def schema_lines(dump):
+    return [line for line in dump.splitlines() if not DUMP_METADATA.fullmatch(line)]
+
+
+def compare_schemas(left_lines, right_lines, left, right):
+    diff = list(difflib.unified_diff(left_lines, right_lines, left, right, lineterm=""))
     if diff:
         print("\n".join(diff))
         return 1
@@ -78,12 +81,19 @@ def main():
     diff = sub.add_parser("compare")
     diff.add_argument("left", help="pg_service.conf entry")
     diff.add_argument("right", help="pg_service.conf entry")
+    files = sub.add_parser("compare-files")
+    files.add_argument("left", type=Path)
+    files.add_argument("right", type=Path)
     dump = sub.add_parser("backup")
     dump.add_argument("service", help="pg_service.conf entry")
     dump.add_argument("destination", type=Path)
     args = parser.parse_args()
     if args.command == "compare":
-        return compare(args.left, args.right)
+        return compare_schemas(schema(args.left), schema(args.right), args.left, args.right)
+    if args.command == "compare-files":
+        left = schema_lines(args.left.read_text(encoding="utf-8-sig"))
+        right = schema_lines(args.right.read_text(encoding="utf-8-sig"))
+        return compare_schemas(left, right, str(args.left), str(args.right))
     os.umask(0o077)
     backup(args.service, args.destination)
     return 0
